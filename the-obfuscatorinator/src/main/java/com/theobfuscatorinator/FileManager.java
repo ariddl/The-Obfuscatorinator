@@ -29,8 +29,9 @@ public class FileManager {
      */
     private static void copyFile(File source, String destinationDirectory) throws IOException {
         File destination = new File(destinationDirectory + "/" +  source.getName());
-        if (destination.exists()) destination.delete();
-        //destination.createNewFile();
+        if (destination.exists()) {
+            destination.delete();
+        }
         System.out.println("Copying File " + source.toString() + " to destination " +
                             destination.toString());
         Files.copy(source.toPath(), destination.toPath());
@@ -66,7 +67,7 @@ public class FileManager {
                 destination.delete();
             }
             System.out.println("Creating Directory: " + destination.getPath());
-            if(!destination.mkdir()){
+            if (!destination.mkdir()) {
                 throw new IOException("Directory " + destination.getAbsolutePath() + " could not be created.");
             }
             for (File child : source.listFiles()) copyDirectory(child, destination.toString());
@@ -82,8 +83,7 @@ public class FileManager {
      * @return A File object of the destination directory
      * @throws IOException
      */
-    public static File copyAndStoreFiles(Vector<String> files, String targetDir)
-     throws IOException {
+    public static File copyAndStoreFiles(Vector<String> files, String targetDir) throws IOException {
         File target = new File(targetDir);
         if (target.exists()) {
             Path directory = target.toPath();
@@ -103,12 +103,13 @@ public class FileManager {
             target.delete();
         }
         target.mkdir();
-        if (!target.isDirectory())
+        if (!target.isDirectory()) {
              throw new IllegalArgumentException("Target File is not a directory ");
+        }
 
         for (String path : files) {
             File tmpFile = new File(path);
-            if(!tmpFile.exists()) throw new IllegalArgumentException("Source file " +
+            if (!tmpFile.exists()) throw new IllegalArgumentException("Source file " +
                                                                       tmpFile.getName() +
                                                                        " does not exist.");
             if (tmpFile.isDirectory()) {
@@ -116,7 +117,6 @@ public class FileManager {
             } else {
                 copyFile(tmpFile, targetDir);
             }
-
         }
         return target;
     }
@@ -127,14 +127,14 @@ public class FileManager {
      * @param directory - Root of the target directory tree
      * @return - Set of all non-directory code files in the tree
      */
-    public static HashSet<File> getAllFilesFromDirectory(File directory){
+    public static HashSet<File> getAllFilesFromDirectory(File directory) {
         HashSet<File> output = new HashSet<File>();
-        if(directory.isDirectory()){
-            for(File child : directory.listFiles()) {
+        if (directory.isDirectory()) {
+            for (File child : directory.listFiles()) {
                 output.addAll(getAllFilesFromDirectory(child));
             }
         }
-        else if(directory.getPath().endsWith(".java")) output.add(directory);
+        else if (directory.getPath().endsWith(".java")) output.add(directory);
         return output;
     }
 
