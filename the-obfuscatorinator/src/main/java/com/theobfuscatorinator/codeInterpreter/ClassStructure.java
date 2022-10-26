@@ -103,7 +103,7 @@ public class ClassStructure {
             String[] implementedClassesArray = new String[0];
             if (implement) {
                 String implementedClasses = full.substring(full.indexOf("implements") + 10);
-                implementedClasses.trim();
+                implementedClasses = implementedClasses.trim();
                 implementedClassesArray = implementedClasses.split(",");
             }
             classes.add(new ClassStructure(currentClass.first, className, sourceFile, 
