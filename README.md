@@ -28,7 +28,7 @@ To build
 
 To run
 
-    java -cp "./target/the-obfuscatorinator-1.0.0.jar" com.theobfuscatorinator.App <inputFile1 inputFile2...> [options]
+    java -cp "./target/the-obfuscatorinator-1.0.0-shaded.jar" com.theobfuscatorinator.modules.ModuleObfuscator <inputFile1 inputFile2...> [options]
 
 ## Options
 

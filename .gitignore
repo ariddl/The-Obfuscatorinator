@@ -68,3 +68,7 @@ the-obfuscatorinator/bin/
 .project
 .classpath
 .settings
+
+# Test output files
+output/
+test/
