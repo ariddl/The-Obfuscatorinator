@@ -39,8 +39,6 @@ public class ConfigurationFile {
 
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element elem = (Element) node;
-                System.out.println(elem.getTagName());
-                
                 switch (elem.getTagName()) {
                     case "ClassPath": loadClassPath(node); break;
                     case "Files": loadInputFiles(elem); break;
@@ -86,9 +84,6 @@ public class ConfigurationFile {
                 modules.add(node.getAttributes().getNamedItem("name").getNodeValue());
                 System.out.println("Using module: " + modules.get(modules.size() - 1));
             }
-        }
-        if (modules.size() == 0) {
-            System.out.println("Using all modules by default");
         }
     }
 

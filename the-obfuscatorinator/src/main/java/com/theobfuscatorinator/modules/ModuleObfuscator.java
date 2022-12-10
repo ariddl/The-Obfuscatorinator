@@ -18,15 +18,18 @@ import com.github.javaparser.utils.SourceRoot;
 import java.lang.reflect.*;
 
 public class ModuleObfuscator {
-    private static final Type[] moduleTypes = new Type[] { StringModule.class };
+    private static final Class[] moduleTypes = new Class[] { StringModule.class };
 
     private HashMap<String, IModule> availableModules = new HashMap<String, IModule>();
     private ConfigurationFile config;
     private ArrayList<IModule> activeModules;
 
     public ModuleObfuscator() {
-        for (Type t : moduleTypes) {
-
+        for (Class c : moduleTypes) {
+            try {
+                IModule module = (IModule)c.newInstance();
+                availableModules.put(module.getName(), module);
+            } catch (Exception e) {}
         }
         activeModules = new ArrayList<>();
     }
@@ -66,6 +69,25 @@ public class ModuleObfuscator {
         if (config.getInputFiles().size() == 0) {
             System.out.println("No input files.");
             return false;
+        }
+
+        for (String moduleName : config.getModules()) {
+            if (!availableModules.containsKey(moduleName)) {
+                System.out.println("Skipping unknown module " + moduleName);
+                continue;
+            }
+            
+            IModule module = availableModules.get(moduleName);
+            if (!activeModules.contains(module)) {
+                activeModules.add(module);
+            }
+        }
+
+        if (activeModules.size() == 0) {
+            System.out.println("Using all modules by default");
+            for (String moduleName : availableModules.keySet()) {
+                activeModules.add(availableModules.get(moduleName));
+            }
         }
 
         return true;
