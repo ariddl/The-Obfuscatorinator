@@ -33,8 +33,8 @@ public class ModuleObfuscator {
         }
         activeModules = new ArrayList<>();
     }
-
-    public boolean init(String[] args) {
+    
+    public boolean processArgs(String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -49,15 +49,23 @@ public class ModuleObfuscator {
             switch (args[i].substring(2)) {
                 case "list-modules":
                 {
+                    System.out.println(String.format("There are (%d) obfuscation modules available.", availableModules.size()));
+                    for (String moduleName : availableModules.keySet()) {
+                        IModule module = availableModules.get(moduleName);
+                        System.out.println(String.format("%s: %s", moduleName, module.getDescription()));
+                    }
                     break;
                 }
             }
-        }
 
-        if (configFile == null) {
+            // A command was used
             return false;
         }
 
+        return configFile != null ? init(configFile) : false;
+    }
+
+    private boolean init(String configFile) {
         try {
             config = new ConfigurationFile(configFile);
         } catch (Exception e) {
@@ -118,7 +126,7 @@ public class ModuleObfuscator {
 
     public static void main(String[] args) {
         ModuleObfuscator obfs = new ModuleObfuscator();
-        if (obfs.init(args)) {
+        if (obfs.processArgs(args)) {
             obfs.run();
         }
     }
