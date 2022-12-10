@@ -52,7 +52,7 @@ final class ModuleUtils {
      * 
      * @return A random name.
      */
-    static String generateName(int length) {
+    static String randName(int length) {
         String charactersToChooseFrom =
          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         String basicLetters = "abcdefghijklmnopqrstuvwxyz";
