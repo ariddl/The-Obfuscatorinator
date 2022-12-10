@@ -1,6 +1,8 @@
 package com.theobfuscatorinator.modules;
+import com.theobfuscatorinator.modules.config.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.nio.file.Paths;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -13,15 +15,62 @@ import com.github.javaparser.utils.CodeGenerationUtils;
 import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.SourceRoot;
 
+import java.lang.reflect.*;
+
 public class ModuleObfuscator {
-    private ArrayList<IModule> modules;
+    private static final Type[] moduleTypes = new Type[] { StringModule.class };
+
+    private HashMap<String, IModule> availableModules = new HashMap<String, IModule>();
+    private ConfigurationFile config;
+    private ArrayList<IModule> activeModules;
 
     public ModuleObfuscator() {
-        modules = new ArrayList<>();
-        modules.add(new StringModule());
+        for (Type t : moduleTypes) {
+
+        }
+        activeModules = new ArrayList<>();
     }
 
-    public void run() {        
+    public boolean init(String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        String configFile = null;
+        for (int i = 0; i < args.length; ++i) {
+            if (!args[i].startsWith("--")) {
+                configFile = args[i];
+                continue;
+            }
+
+            switch (args[i].substring(2)) {
+                case "list-modules":
+                {
+                    break;
+                }
+            }
+        }
+
+        if (configFile == null) {
+            return false;
+        }
+
+        try {
+            config = new ConfigurationFile(configFile);
+        } catch (Exception e) {
+            System.out.println("Error loading configuration file.");
+            return false;
+        }
+
+        if (config.getInputFiles().size() == 0) {
+            System.out.println("No input files.");
+            return false;
+        }
+
+        return true;
+    }
+
+    public void run() {
         Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
 
         SourceRoot sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(ModuleObfuscator.class).resolve("src/main/res"));
@@ -30,7 +79,7 @@ public class ModuleObfuscator {
 
         Log.info("running");
 
-        cu.accept((ModifierVisitor<Void>)modules.get(0), null);
+        cu.accept((ModifierVisitor<Void>)activeModules.get(0), null);
 
         cu.accept(new ModifierVisitor<Void>() {
             @Override
@@ -57,6 +106,8 @@ public class ModuleObfuscator {
 
     public static void main(String[] args) {
         ModuleObfuscator obfs = new ModuleObfuscator();
-        obfs.run();
+        if (obfs.init(args)) {
+            obfs.run();
+        }
     }
 }
