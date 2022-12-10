@@ -11,7 +11,8 @@ import com.theobfuscatorinator.codeInterpreter.CodeStructure;
  */
 
 public class InsertCode {
-	
+	private static Random rnd = new Random();
+    
     /**
      * getRandomString generates a random string of length 50 made up of letters and digits
      * @return A randomly generated string
@@ -21,7 +22,7 @@ public class InsertCode {
         String alphabetNumbers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder str = new StringBuilder();
-        Random rnd = new Random();
+        
         int index = (int) (rnd.nextFloat() * alphabet.length());
         str.append(alphabet.charAt(index));
         while (str.length() < 50) {

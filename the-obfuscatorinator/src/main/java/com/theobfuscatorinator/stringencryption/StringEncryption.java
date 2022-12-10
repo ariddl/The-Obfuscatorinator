@@ -14,6 +14,8 @@ public class StringEncryption {
     private static final int CONST_MULT = 42;
     private static final int CONST_OFFSET = 27000;
     private static final int CONST_MOD = 100;
+
+    private static Random random = new Random();
     
     /**
      * Templated custom pair class, because there does not seem to be a reasonable way to do this 
@@ -93,8 +95,6 @@ public class StringEncryption {
     public static String encryptStrings(CodeStructure codeStructure, String decryptionMethodName) {
         ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
         String code = codeStructure.getOriginalCode().substring(0);
-
-        Random random = new Random();
         
         for (int i = strings.size() - 1; i >= 0; i--) {
             String string = strings.get(i).first.substring(1, strings.get(i).first.length() - 1);

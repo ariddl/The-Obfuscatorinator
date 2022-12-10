@@ -6,6 +6,7 @@ import java.util.Random;
 
 
 public class Unicoder {
+    private static Random rand = new Random();
 
     /**
      * Converts character to Unicode string.
@@ -29,7 +30,6 @@ public class Unicoder {
     public static void swapForUnicode(ArrayList<CodeStructure> codeStructures, int percentToReplace) {
         String valid =
          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>.,;:+-*/%&|^!~?_";
-        Random rand = new Random();
         
         for (CodeStructure struct : codeStructures) {
             String code = struct.getUnCommentedCode();

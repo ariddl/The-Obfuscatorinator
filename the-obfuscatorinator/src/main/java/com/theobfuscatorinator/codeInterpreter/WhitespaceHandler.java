@@ -11,6 +11,8 @@ import java.util.*;
 
 public class WhitespaceHandler {
 
+    private static Random rand = new Random();
+
     /**
      * Removes all the newlines in the project and then re-inserts a predetermined
      * number of newlines back into each file at random locations.
@@ -55,7 +57,6 @@ public class WhitespaceHandler {
         HashSet<Character> safeCharacters = new HashSet<Character>();
         ArrayList<Integer> indices = new ArrayList<Integer>();
         for(char c : safechars) safeCharacters.add(c);
-        Random rand = new Random();
 
         for(CodeStructure struct : codeStructures){
             indices.clear();
