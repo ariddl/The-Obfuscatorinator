@@ -37,7 +37,46 @@ public class ConfigurationFile {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element elem = (Element) node;
                 System.out.println(elem.getTagName());
+                
+                switch (elem.getTagName()) {
+                    case "ClassPath": loadClassPath(node); break;
+                    case "Files": loadInputFiles(elem); break;
+                    case "Modules": loadModules(elem); break;
+                    default: break;
+                }
             }
+        }
+    }
+
+    private void loadClassPath(Node node) {
+        sourceRoot = node.getAttributes().getNamedItem("path").getNodeValue();
+        System.out.println("Using source root: " + sourceRoot);
+    }
+
+    private void loadInputFiles(Element elem) {
+        NodeList nodes = elem.getElementsByTagName("File");
+        for (int i = 0; i < nodes.getLength(); ++i) {
+            Node node = nodes.item(i);
+            InputFileEntry e = new InputFileEntry();
+            e.packageName = node.getAttributes().getNamedItem("package").getNodeValue();
+            e.name = node.getAttributes().getNamedItem("name").getNodeValue();
+            inputFiles.add(e);
+            System.out.println("Input file: [" + e.packageName + ", " + e.name + "]");
+        }
+    }
+
+    private void loadModules(Element elem) {
+        NodeList nodes = elem.getElementsByTagName("Module");
+        for (int i = 0; i < nodes.getLength(); ++i) {
+            Node node = nodes.item(i);
+            String enabled = node.getAttributes().getNamedItem("enabled").getNodeValue();
+            if (enabled.equalsIgnoreCase("true")) {
+                modules.add(node.getAttributes().getNamedItem("name").getNodeValue());
+                System.out.println("Using module: " + modules.get(modules.size() - 1));
+            }
+        }
+        if (modules.size() == 0) {
+            System.out.println("Using all modules by default");
         }
     }
 

@@ -58,6 +58,7 @@ public class ModuleObfuscator {
         try {
             config = new ConfigurationFile(configFile);
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error loading configuration file.");
             return false;
         }

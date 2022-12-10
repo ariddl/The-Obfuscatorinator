@@ -1,8 +1,9 @@
 <Configuration>
-    <ClassPath path=""/>
+    <ClassPath path="path"/>
     <Files>
         <File package="test" name="Main.java" />
     </Files>
     <Modules>
+        <Module name="String" enabled="true" />
     </Modules>
 </Configuration>
