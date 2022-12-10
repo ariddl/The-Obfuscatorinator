@@ -38,8 +38,18 @@ final class ModuleUtils {
         return nodes;
     }
 
+    /**
+     * Get a random number from [0, bound)
+     */
     static int randInt(int bound) {
         return rnd.nextInt(bound);
+    }
+    
+    /**
+     * Get a random element from the given array.
+     */
+    static <T> T randElem(T[] arr) {
+        return arr[rnd.nextInt(arr.length)];
     }
 
     /**
