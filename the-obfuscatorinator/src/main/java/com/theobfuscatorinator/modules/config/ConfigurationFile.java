@@ -17,8 +17,8 @@ import org.xml.sax.SAXException;
 
 public class ConfigurationFile {
     private String sourceRoot;
-    private ArrayList<InputFileEntry> inputFiles;
-    private ArrayList<String> modules;
+    private ArrayList<InputFileEntry> inputFiles = new ArrayList<InputFileEntry>();
+    private ArrayList<String> modules = new ArrayList<String>();
 
     public ConfigurationFile(String file) throws ParserConfigurationException,
           SAXException, IOException {
@@ -29,6 +29,9 @@ public class ConfigurationFile {
         load(document);
     }
 
+    /*
+        Load top-level config nodes
+    */
     private void load(Document document) {
         NodeList nodeList = document.getDocumentElement().getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -48,11 +51,17 @@ public class ConfigurationFile {
         }
     }
 
+    /*
+        Parse source root/class path from XML
+    */
     private void loadClassPath(Node node) {
         sourceRoot = node.getAttributes().getNamedItem("path").getNodeValue();
         System.out.println("Using source root: " + sourceRoot);
     }
 
+    /*
+        Parse input source files from XML
+    */
     private void loadInputFiles(Element elem) {
         NodeList nodes = elem.getElementsByTagName("File");
         for (int i = 0; i < nodes.getLength(); ++i) {
@@ -65,6 +74,9 @@ public class ConfigurationFile {
         }
     }
 
+    /*
+        Parse enabled modules from XML
+    */
     private void loadModules(Element elem) {
         NodeList nodes = elem.getElementsByTagName("Module");
         for (int i = 0; i < nodes.getLength(); ++i) {
@@ -80,14 +92,23 @@ public class ConfigurationFile {
         }
     }
 
+    /*
+        The project root directory where all Java packages and classes are located.
+    */
     public String getSourceRoot() {
         return sourceRoot;
     }
 
+    /*
+        Get files to be obfuscated.
+    */
     public ArrayList<InputFileEntry> getInputFiles() {
         return inputFiles;
     }
 
+    /*
+        Get obfuscation modules to use. If none provided, all are used.
+    */
     public ArrayList<String> getModules() {
         return modules;
     }
