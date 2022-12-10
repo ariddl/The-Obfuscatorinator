@@ -95,9 +95,11 @@ public class ModuleObfuscator {
             }
             
             if (!me.enabled) {
+                // Module is explicitly disabled, skip
                 continue;
             }
 
+            // Use this obfuscation module
             IModule module = availableModules.get(me.name);
             if (!activeModules.contains(module)) {
                 activeModules.add(module);

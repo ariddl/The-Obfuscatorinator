@@ -25,13 +25,24 @@ public class MiscModule implements IModule {
         ctx.currentCU.accept(new ModifierVisitor<Void>() {
             @Override
             public Visitable visit(IfStmt n, Void arg) {
+                // Process binary if expressions
                 n.getCondition().ifBinaryExpr(binExpr -> {
-                    if (binExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS && n.getElseStmt().isPresent()) {
-                        Statement thenStmt = n.getThenStmt().clone();
-                        Statement elseStmt = n.getElseStmt().get().clone();
-                        n.setThenStmt(elseStmt);
-                        n.setElseStmt(thenStmt);
-                        binExpr.setOperator(BinaryExpr.Operator.EQUALS);
+                    // Need an else body as well
+                    if (n.getElseStmt().isPresent()) {
+                        // If this is an == or !=
+                        if (binExpr.getOperator() == BinaryExpr.Operator.EQUALS ||
+                            binExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS) {
+                            // Flip the then and else code blocks
+                            Statement thenStmt = n.getThenStmt().clone();
+                            Statement elseStmt = n.getElseStmt().get().clone();
+                            n.setThenStmt(elseStmt);
+                            n.setElseStmt(thenStmt);
+
+                            // Set operator to opposite of what it was
+                            binExpr.setOperator(binExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS
+                                                ? BinaryExpr.Operator.EQUALS
+                                                : BinaryExpr.Operator.NOT_EQUALS);
+                        }
                     }
                 });
                 return super.visit(n, arg);
