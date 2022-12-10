@@ -1,13 +1,13 @@
 <Configuration>
     <ClassPath path="$src/main/res" outPath="$output" />
-    <Format removeWhitespace="true" removeLines="true" />
+    <Format removeWhitespace="false" removeLines="false" />
     <Files>
         <File package="test" name="Main.java" />
     </Files>
     <Modules>
         <Module name="String" enabled="false" />
-        <Module name="Misc" enabled="false" />
-        <Module name="Rename" enabled="true" />
+        <Module name="Misc" enabled="true" />
+        <Module name="Rename" enabled="false" />
         <Module name="CodeInsert" enabled="false" />
     </Modules>
 </Configuration>
