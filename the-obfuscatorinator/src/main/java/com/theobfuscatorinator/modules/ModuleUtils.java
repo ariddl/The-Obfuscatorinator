@@ -25,7 +25,7 @@ final class ModuleUtils {
         in theory if the user has two top-level classes. This is a useful utility
         for when we want to modify classes by adding methods, etc.
     */
-    static Node findClassOrInterfaceDeclaration(CompilationUnit cu) {
+    static ArrayList<Node> findClassOrInterfaceDeclaration(CompilationUnit cu) {
         ArrayList<Node> nodes = new ArrayList<>();
         for (Node node : cu.getChildNodes()) {
             if (node instanceof ClassOrInterfaceDeclaration) {

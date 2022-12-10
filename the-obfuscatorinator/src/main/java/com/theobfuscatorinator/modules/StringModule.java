@@ -6,13 +6,9 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.Visitable;
-import com.github.javaparser.utils.CodeGenerationUtils;
-import com.github.javaparser.utils.Log;
-import com.github.javaparser.utils.SourceRoot;
 
 
 public class StringModule implements IModule {

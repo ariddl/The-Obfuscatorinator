@@ -18,7 +18,8 @@ import com.github.javaparser.utils.SourceRoot;
 import java.lang.reflect.*;
 
 public class ModuleObfuscator {
-    private static final Class[] moduleTypes = new Class[] { StringModule.class, MiscModule.class };
+    private static final Class[] moduleTypes = new Class[] { StringModule.class, MiscModule.class, 
+                                                             RenameModule.class };
 
     private HashMap<String, IModule> availableModules = new HashMap<String, IModule>();
     private ConfigurationFile config;
@@ -112,7 +113,7 @@ public class ModuleObfuscator {
 
     public void run() {
         SourceRoot sourceRoot = new SourceRoot(ModuleUtils.resolvePath(config.getSourceRoot()));
-        
+
         Context ctx = new Context();
         for (InputFileEntry inputFile : config.getInputFiles()) {
             ctx.currentCU = sourceRoot.parse(inputFile.packageName, inputFile.name);
