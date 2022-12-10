@@ -1,0 +1,8 @@
+<Configuration>
+    <ClassPath path=""/>
+    <Files>
+        <File package="test" name="Main.java" />
+    </Files>
+    <Modules>
+    </Modules>
+</Configuration>
