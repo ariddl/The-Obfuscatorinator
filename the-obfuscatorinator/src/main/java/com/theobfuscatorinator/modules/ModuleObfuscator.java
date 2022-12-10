@@ -29,6 +29,7 @@ public class ModuleObfuscator {
     public ModuleObfuscator() {
         for (Class c : moduleTypes) {
             try {
+                // Instantiate all possible modules
                 IModule module = (IModule)c.newInstance();
                 availableModules.put(module.getName(), module);
             } catch (Exception e) {}
@@ -38,16 +39,20 @@ public class ModuleObfuscator {
     
     public boolean processArgs(String[] args) {
         if (args.length == 0) {
+            Log.error("Config file or command required.");
             return false;
         }
 
         String configFile = null;
         for (int i = 0; i < args.length; ++i) {
             if (!args[i].startsWith("--")) {
+                // Not a command, we'll assume this is our config file
                 configFile = args[i];
                 continue;
             }
 
+            // Check for commands
+            // If user does command, do not process output
             switch (args[i].substring(2)) {
                 case "list-modules":
                 {
@@ -76,11 +81,13 @@ public class ModuleObfuscator {
             return false;
         }
 
+        // We need stuff to obfuscate!
         if (config.getInputFiles().size() == 0) {
             Log.error("No input files.");
             return false;
         }
 
+        // Add the modules we want
         for (ModuleEntry me : config.getModules()) {
             if (!availableModules.containsKey(me.name)) {
                 Log.info("Skipping unknown obfuscation module " + me.name);
@@ -97,6 +104,7 @@ public class ModuleObfuscator {
             }
         }
 
+        // By default use everything if nothing is specified
         if (config.getModules().size() == 0) {
             Log.info("Using all obfuscation modules by default");
             for (String moduleName : availableModules.keySet()) {
@@ -104,6 +112,7 @@ public class ModuleObfuscator {
             }
         }
 
+        // Nothing to do if no modules
         if (activeModules.size() == 0) {
             Log.error("No obfuscation modules selected.");
             return false;
@@ -112,37 +121,47 @@ public class ModuleObfuscator {
         return true;
     }
 
+    // Get a custom printer for formatting output, depending on config
     private Function<CompilationUnit, String> getSourcePrinter(SourceRoot sourceRoot) {
         Function<CompilationUnit, String> defaultPrinter = sourceRoot.getPrinter();
         int formatFlags = config.getFormatFlags();
         
+        // No formatting flags set means we can use default pretty printer
         if (formatFlags == 0) {
             return defaultPrinter;
         }
 
+        // Return a custom printer
         return cu -> {
+            // Get the default pretty printed output for this compilation unit
             String pretty = defaultPrinter.apply(cu);
             
+            // Remove whitespace if we need to
             if ((formatFlags & FormatFlags.WHITESPACE.getValue()) != 0) {
                 for (String ws : new String[] {"  ", "\t"}) {
                     pretty = pretty.replace(ws, "");
                 }
             }
 
+            // Remove lines if needed
             if ((formatFlags & FormatFlags.LINES.getValue()) != 0) {
                 for (String c : new String[] {"\r", "\n"}) {
                     pretty = pretty.replace(c, "");
                 }
             }
 
+            // Return the prettified (or perhaps less pretty) source for this compilation unit
             return pretty;
         };
     }
 
     public void run() {
+        // Get our SourceRoot, which will represent the root of the project we are obfuscating.
         SourceRoot sourceRoot = new SourceRoot(ModuleUtils.resolvePath(config.getSourceRoot()));
         sourceRoot.setPrinter(getSourcePrinter(sourceRoot));
 
+        // Initialize an obfuscation context and execute all active modules on each compilation
+        // unit, or file in the project (the ones specified in configuration file).
         Context ctx = new Context();
         for (InputFileEntry inputFile : config.getInputFiles()) {
             ctx.currentCU = sourceRoot.parse(inputFile.packageName, inputFile.name);
@@ -151,6 +170,7 @@ public class ModuleObfuscator {
             }
         }
 
+        // Save all Java source files
         sourceRoot.saveAll(ModuleUtils.resolvePath(config.getOutputRoot()));
     }
 
