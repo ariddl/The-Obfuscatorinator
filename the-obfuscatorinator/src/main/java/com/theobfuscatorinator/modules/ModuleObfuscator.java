@@ -70,18 +70,18 @@ public class ModuleObfuscator {
             config = new ConfigurationFile(configFile);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error loading configuration file.");
+            Log.error("Error loading configuration file.");
             return false;
         }
 
         if (config.getInputFiles().size() == 0) {
-            System.out.println("No input files.");
+            Log.error("No input files.");
             return false;
         }
 
         for (ModuleEntry me : config.getModules()) {
             if (!availableModules.containsKey(me.name)) {
-                System.out.println("Skipping unknown obfuscation module " + me.name);
+                Log.info("Skipping unknown obfuscation module " + me.name);
                 continue;
             }
             
@@ -96,14 +96,14 @@ public class ModuleObfuscator {
         }
 
         if (config.getModules().size() == 0) {
-            System.out.println("Using all obfuscation modules by default");
+            Log.info("Using all obfuscation modules by default");
             for (String moduleName : availableModules.keySet()) {
                 activeModules.add(availableModules.get(moduleName));
             }
         }
 
         if (activeModules.size() == 0) {
-            System.out.println("No obfuscation modules selected.");
+            Log.error("No obfuscation modules selected.");
             return false;
         }
 
@@ -111,8 +111,6 @@ public class ModuleObfuscator {
     }
 
     public void run() {
-        Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
-
         SourceRoot sourceRoot = new SourceRoot(ModuleUtils.resolvePath(config.getSourceRoot()));
         for (InputFileEntry inputFile : config.getInputFiles()) {
             CompilationUnit cu = sourceRoot.parse(inputFile.packageName, inputFile.name);
@@ -125,6 +123,8 @@ public class ModuleObfuscator {
     }
 
     public static void main(String[] args) {
+        Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
+
         ModuleObfuscator obfs = new ModuleObfuscator();
         if (obfs.processArgs(args)) {
             obfs.run();
