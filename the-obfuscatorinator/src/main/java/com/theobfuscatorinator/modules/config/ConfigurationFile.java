@@ -20,6 +20,7 @@ public class ConfigurationFile {
     private String outRoot;
     private ArrayList<InputFileEntry> inputFiles = new ArrayList<InputFileEntry>();
     private ArrayList<ModuleEntry> modules = new ArrayList<ModuleEntry>();
+    private int formatFlags;
 
     public ConfigurationFile(String file) throws ParserConfigurationException,
           SAXException, IOException {
@@ -44,6 +45,7 @@ public class ConfigurationFile {
                     case "ClassPath": loadClassPath(node); break;
                     case "Files": loadInputFiles(elem); break;
                     case "Modules": loadModules(elem); break;
+                    case "Format": loadFormat(node); break;
                     default: break;
                 }
             }
@@ -89,6 +91,16 @@ public class ConfigurationFile {
     }
 
     /*
+        Parse output formatting options from XML
+    */
+    private void loadFormat(Node node) {
+        if (node.getAttributes().getNamedItem("removeWhitespace").getNodeValue().equalsIgnoreCase("true"))
+            formatFlags |= FormatFlags.WHITESPACE.getValue();
+        if (node.getAttributes().getNamedItem("removeLines").getNodeValue().equalsIgnoreCase("true"))
+            formatFlags |= FormatFlags.LINES.getValue();
+    }
+
+    /*
         The project root directory where all Java packages and classes are located.
     */
     public String getSourceRoot() {
@@ -114,5 +126,12 @@ public class ConfigurationFile {
     */
     public ArrayList<ModuleEntry> getModules() {
         return modules;
+    }
+
+    /*
+        Get flags representing all requested formatting options
+    */
+    public int getFormatFlags() {
+        return formatFlags;
     }
 }
