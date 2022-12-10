@@ -31,6 +31,8 @@ public class CodeStructure {
 
     private String decryptionMethodName;
 
+    private static Random rnd = new Random();
+
     /**
      * Constructor will build all of the structure for you
      * @param input File to be searched for code elements
@@ -156,8 +158,7 @@ public class CodeStructure {
         String add = "";
         //loops through the code adding comments
         while (j < copy.length()) {
-            Random num = new Random();
-            int r_num = num.nextInt(4); 
+            int r_num = rnd.nextInt(4); 
             //ignores comments
         	if (copy.charAt(j) == '"') {
             	while (copy.charAt(j) != '"') {
@@ -212,13 +213,11 @@ public class CodeStructure {
      */
     private String createEComments(int pos) {
         //sets parameters for the function
-        Random num = new Random();
-        int r_num = num.nextInt(40); 
+        int r_num = rnd.nextInt(40); 
         int begin = 48;
         int end = 122;
-        Random gen = new Random();
         //generates a new random string of length 40
-        String encrypted = gen.ints(begin, end + 1)
+        String encrypted = rnd.ints(begin, end + 1)
           .filter(x -> (x <= 57 || x >= 65) && (x <= 90 || x >= 97))
           .limit(r_num)
           .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
@@ -226,8 +225,7 @@ public class CodeStructure {
         int count = 0;
         for (int x = 0; x < encrypted.length(); x++) {
             //adds spaces into comments at random positions
-            Random num2 = new Random();
-            int r_num2 = num2.nextInt(10); 
+            int r_num2 = rnd.nextInt(10); 
             r_num2 = r_num2 + 5;
             if (count == r_num2) {
                 String start = encrypted.substring(0, x);
@@ -269,8 +267,7 @@ public class CodeStructure {
         comments.add("I think this is causing the error");
         comments.add("sets parameters for the function");
         //picks and returns a random comment
-        Random num = new Random();
-        int r_num = num.nextInt(17); 
+        int r_num = rnd.nextInt(17); 
         return "/*" + comments.get(r_num)+"*/";
     }
 
