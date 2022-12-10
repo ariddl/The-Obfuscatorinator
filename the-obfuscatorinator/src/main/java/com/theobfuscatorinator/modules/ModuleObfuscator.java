@@ -18,7 +18,7 @@ import com.github.javaparser.utils.SourceRoot;
 import java.lang.reflect.*;
 
 public class ModuleObfuscator {
-    private static final Class[] moduleTypes = new Class[] { StringModule.class };
+    private static final Class[] moduleTypes = new Class[] { StringModule.class, MiscModule.class };
 
     private HashMap<String, IModule> availableModules = new HashMap<String, IModule>();
     private ConfigurationFile config;
@@ -73,7 +73,7 @@ public class ModuleObfuscator {
 
         for (ModuleEntry me : config.getModules()) {
             if (!availableModules.containsKey(me.name)) {
-                System.out.println("Skipping unknown module " + me.name);
+                System.out.println("Skipping unknown obfuscation module " + me.name);
                 continue;
             }
             
@@ -88,10 +88,15 @@ public class ModuleObfuscator {
         }
 
         if (config.getModules().size() == 0) {
-            System.out.println("Using all modules by default");
+            System.out.println("Using all obfuscation modules by default");
             for (String moduleName : availableModules.keySet()) {
                 activeModules.add(availableModules.get(moduleName));
             }
+        }
+
+        if (activeModules.size() == 0) {
+            System.out.println("No obfuscation modules selected.");
+            return false;
         }
 
         return true;
@@ -114,22 +119,6 @@ public class ModuleObfuscator {
             for (int i = 0; i < activeModules.size(); ++i) {
                 cu.accept((ModifierVisitor<Void>)activeModules.get(i), null);
             }
-
-            cu.accept(new ModifierVisitor<Void>() {
-                @Override
-                public Visitable visit(IfStmt n, Void arg) {
-                    n.getCondition().ifBinaryExpr(binaryExpr -> {
-                        if (binaryExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS && n.getElseStmt().isPresent()) {
-                            Statement thenStmt = n.getThenStmt().clone();
-                            Statement elseStmt = n.getElseStmt().get().clone();
-                            n.setThenStmt(elseStmt);
-                            n.setElseStmt(thenStmt);
-                            binaryExpr.setOperator(BinaryExpr.Operator.EQUALS);
-                        }
-                    });
-                    return super.visit(n, arg);
-                }
-            }, null);
         }
 
         sourceRoot.saveAll(

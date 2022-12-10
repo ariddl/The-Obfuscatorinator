@@ -4,6 +4,7 @@
         <File package="test" name="Main.java" />
     </Files>
     <Modules>
-        <Module name="String" enabled="true" />
+        <Module name="String" enabled="false" />
+        <Module name="Misc" enabled="true" />
     </Modules>
 </Configuration>
