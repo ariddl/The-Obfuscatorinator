@@ -71,19 +71,23 @@ public class ModuleObfuscator {
             return false;
         }
 
-        for (String moduleName : config.getModules()) {
-            if (!availableModules.containsKey(moduleName)) {
-                System.out.println("Skipping unknown module " + moduleName);
+        for (ModuleEntry me : config.getModules()) {
+            if (!availableModules.containsKey(me.name)) {
+                System.out.println("Skipping unknown module " + me.name);
                 continue;
             }
             
-            IModule module = availableModules.get(moduleName);
+            if (!me.enabled) {
+                continue;
+            }
+
+            IModule module = availableModules.get(me.name);
             if (!activeModules.contains(module)) {
                 activeModules.add(module);
             }
         }
 
-        if (activeModules.size() == 0) {
+        if (config.getModules().size() == 0) {
             System.out.println("Using all modules by default");
             for (String moduleName : availableModules.keySet()) {
                 activeModules.add(availableModules.get(moduleName));

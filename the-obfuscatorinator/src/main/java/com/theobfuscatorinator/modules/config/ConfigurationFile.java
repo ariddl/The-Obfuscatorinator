@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 public class ConfigurationFile {
     private String sourceRoot;
     private ArrayList<InputFileEntry> inputFiles = new ArrayList<InputFileEntry>();
-    private ArrayList<String> modules = new ArrayList<String>();
+    private ArrayList<ModuleEntry> modules = new ArrayList<ModuleEntry>();
 
     public ConfigurationFile(String file) throws ParserConfigurationException,
           SAXException, IOException {
@@ -79,11 +79,11 @@ public class ConfigurationFile {
         NodeList nodes = elem.getElementsByTagName("Module");
         for (int i = 0; i < nodes.getLength(); ++i) {
             Node node = nodes.item(i);
-            String enabled = node.getAttributes().getNamedItem("enabled").getNodeValue();
-            if (enabled.equalsIgnoreCase("true")) {
-                modules.add(node.getAttributes().getNamedItem("name").getNodeValue());
-                System.out.println("Using module: " + modules.get(modules.size() - 1));
-            }
+            ModuleEntry e = new ModuleEntry();
+            e.name = node.getAttributes().getNamedItem("name").getNodeValue();
+            e.enabled = node.getAttributes().getNamedItem("enabled").getNodeValue().equalsIgnoreCase("true");
+            modules.add(e);
+            System.out.println("Module: " + e.name + ": " + e.enabled);
         }
     }
 
@@ -104,7 +104,7 @@ public class ConfigurationFile {
     /*
         Get obfuscation modules to use. If none provided, all are used.
     */
-    public ArrayList<String> getModules() {
+    public ArrayList<ModuleEntry> getModules() {
         return modules;
     }
 }
