@@ -112,10 +112,12 @@ public class ModuleObfuscator {
 
     public void run() {
         SourceRoot sourceRoot = new SourceRoot(ModuleUtils.resolvePath(config.getSourceRoot()));
+        
+        Context ctx = new Context();
         for (InputFileEntry inputFile : config.getInputFiles()) {
-            CompilationUnit cu = sourceRoot.parse(inputFile.packageName, inputFile.name);
+            ctx.currentCU = sourceRoot.parse(inputFile.packageName, inputFile.name);
             for (int i = 0; i < activeModules.size(); ++i) {
-                cu.accept((ModifierVisitor<Void>)activeModules.get(i), null);
+                activeModules.get(i).execute(ctx);
             }
         }
 
