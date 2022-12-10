@@ -28,20 +28,29 @@ public class RenameModule implements IModule {
 
     @Override
     public void execute(Context ctx) {
-        HashMap<String, String> renamedMethods = new HashMap<>();
+        HashMap<String, SimpleName> renamedMethods = new HashMap<>();
 
-        for (Node node : ctx.currentCU.getChildNodes()) {
-            if (node instanceof ClassOrInterfaceDeclaration) {
+        // Rename methods
+        ctx.currentCU.accept(new ModifierVisitor<Void>() {
+            @Override
+            public Visitable visit(MethodDeclaration n, Void arg) {
+                String oldName = n.getNameAsString();
+                SimpleName name = new SimpleName();
+                name.setIdentifier(ModuleUtils.randName(8));
+                n.setName(name);
+                renamedMethods.put(oldName, name);
+                return super.visit(n, arg);
             }
-        }
+        }, null);
 
         // Apply a visitor to update the references to the things we renamed (e.g., methods)
         ctx.currentCU.accept(new ModifierVisitor<Void>() {
             @Override
             public Visitable visit(MethodCallExpr n, Void arg) {
-                SimpleName name = new SimpleName();
-                name.setIdentifier(ModuleUtils.randName(8));
-                n.setName(name);
+                String name = n.getNameAsString();
+                if (renamedMethods.containsKey(name)) {
+                    n.setName(renamedMethods.get(name).clone());
+                }
                 return super.visit(n, arg);
             }
         }, null);
