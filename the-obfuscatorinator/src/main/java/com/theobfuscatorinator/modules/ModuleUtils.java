@@ -41,4 +41,29 @@ final class ModuleUtils {
     static int randInt(int bound) {
         return rnd.nextInt(bound);
     }
+
+    /**
+     * Generate random name for methods, variables, and classes.
+     * <br/><br/>
+     * 
+     * Generate a name with a target length. All generated names
+     * start with a lower case letter. The rest of the name is made up of random letters, upper or
+     * lower case, and numbers between 0 and 9.
+     * 
+     * @return A random name.
+     */
+    static String generateName(int length) {
+        String charactersToChooseFrom =
+         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        String basicLetters = "abcdefghijklmnopqrstuvwxyz";
+
+        // Names must start with a letter
+        StringBuilder name = new StringBuilder();
+        name.append(basicLetters.charAt(randInt(basicLetters.length())));
+
+        for (int i = 0; i < length - 1; i++) {
+            name.append(charactersToChooseFrom.charAt(randInt(charactersToChooseFrom.length())));
+        }
+        return name.toString();
+    }
 }
