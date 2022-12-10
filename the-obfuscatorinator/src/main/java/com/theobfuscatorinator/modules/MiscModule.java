@@ -27,16 +27,21 @@ public class MiscModule extends ModifierVisitor<Void> implements IModule {
     }
 
     @Override
-    public Visitable visit(IfStmt n, Void arg) {
-        n.getCondition().ifBinaryExpr(binaryExpr -> {
-            if (binaryExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS && n.getElseStmt().isPresent()) {
-                Statement thenStmt = n.getThenStmt().clone();
-                Statement elseStmt = n.getElseStmt().get().clone();
-                n.setThenStmt(elseStmt);
-                n.setElseStmt(thenStmt);
-                binaryExpr.setOperator(BinaryExpr.Operator.EQUALS);
+    public void execute(Context ctx) {
+        ctx.currentCU.accept(new ModifierVisitor<Void>() {
+            @Override
+            public Visitable visit(IfStmt n, Void arg) {
+                n.getCondition().ifBinaryExpr(binExpr -> {
+                    if (binExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS && n.getElseStmt().isPresent()) {
+                        Statement thenStmt = n.getThenStmt().clone();
+                        Statement elseStmt = n.getElseStmt().get().clone();
+                        n.setThenStmt(elseStmt);
+                        n.setElseStmt(thenStmt);
+                        binExpr.setOperator(BinaryExpr.Operator.EQUALS);
+                    }
+                });
+                return super.visit(n, arg);
             }
-        });
-        return super.visit(n, arg);
+        }, null);
     }
 }
