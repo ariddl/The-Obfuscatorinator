@@ -3,6 +3,7 @@ package com.theobfuscatorinator.modules;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.github.javaparser.utils.CodeGenerationUtils;
 import com.github.javaparser.ast.CompilationUnit;
@@ -10,6 +11,8 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 final class ModuleUtils {
+    private static Random rnd = new Random();
+
     /*
         Resolve a path, either relative (if path starts with $) or absolute.
         Relative meaning relative to the maven project.
@@ -33,5 +36,9 @@ final class ModuleUtils {
             }
         }
         return nodes;
+    }
+
+    static int randInt(int bound) {
+        return rnd.nextInt(bound);
     }
 }
