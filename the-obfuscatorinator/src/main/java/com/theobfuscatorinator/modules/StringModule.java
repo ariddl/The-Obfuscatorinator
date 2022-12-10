@@ -15,7 +15,7 @@ import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.SourceRoot;
 
 
-public class StringModule extends ModifierVisitor<Void> implements IModule {
+public class StringModule implements IModule {
     @Override
     public String getName() {
         return "String";
@@ -27,8 +27,13 @@ public class StringModule extends ModifierVisitor<Void> implements IModule {
     }
 
     @Override
-    public Visitable visit(StringLiteralExpr n, Void arg) {
-        n.setValue("myString");
-        return super.visit(n, arg);
+    public void execute(Context ctx) {
+        ctx.currentCU.accept(new ModifierVisitor<Void>() {
+            @Override
+            public Visitable visit(StringLiteralExpr n, Void arg) {
+                n.setValue(n.getValue() + "_a");
+                return super.visit(n, arg);
+            }
+        }, null);
     }
 }
