@@ -105,15 +105,7 @@ public class ModuleObfuscator {
     public void run() {
         Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
 
-        String sourceRootPath = config.getSourceRoot();
-        SourceRoot sourceRoot;
-        if (sourceRootPath.startsWith("$")) {
-            // Use relative path for testing
-            sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(ModuleObfuscator.class).resolve(sourceRootPath.substring(1)));
-        } else {
-            sourceRoot = new SourceRoot(Paths.get(sourceRootPath));
-        }
-
+        SourceRoot sourceRoot = new SourceRoot(ModuleUtils.resolvePath(config.getSourceRoot()));
         for (InputFileEntry inputFile : config.getInputFiles()) {
             CompilationUnit cu = sourceRoot.parse(inputFile.packageName, inputFile.name);
             for (int i = 0; i < activeModules.size(); ++i) {
@@ -121,11 +113,7 @@ public class ModuleObfuscator {
             }
         }
 
-        sourceRoot.saveAll(
-                // The path of the Maven module/project which contains the ModuleObfuscator class.
-                CodeGenerationUtils.mavenModuleRoot(ModuleObfuscator.class)
-                        // appended with a path to "output"
-                        .resolve(Paths.get("output")));
+        sourceRoot.saveAll(ModuleUtils.resolvePath(config.getOutputRoot()));
     }
 
     public static void main(String[] args) {

@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 
 public class ConfigurationFile {
     private String sourceRoot;
+    private String outRoot;
     private ArrayList<InputFileEntry> inputFiles = new ArrayList<InputFileEntry>();
     private ArrayList<ModuleEntry> modules = new ArrayList<ModuleEntry>();
 
@@ -54,7 +55,7 @@ public class ConfigurationFile {
     */
     private void loadClassPath(Node node) {
         sourceRoot = node.getAttributes().getNamedItem("path").getNodeValue();
-        System.out.println("Using source root: " + sourceRoot);
+        outRoot = node.getAttributes().getNamedItem("outPath").getNodeValue();
     }
 
     /*
@@ -92,6 +93,13 @@ public class ConfigurationFile {
     */
     public String getSourceRoot() {
         return sourceRoot;
+    }
+
+     /*
+        The output directory where obfuscateed souce files are written.
+    */
+    public String getOutputRoot() {
+        return outRoot;
     }
 
     /*

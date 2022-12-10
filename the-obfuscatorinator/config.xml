@@ -1,5 +1,5 @@
 <Configuration>
-    <ClassPath path="$src/main/res"/>
+    <ClassPath path="$src/main/res" outPath="$output" />
     <Files>
         <File package="test" name="Main.java" />
     </Files>
