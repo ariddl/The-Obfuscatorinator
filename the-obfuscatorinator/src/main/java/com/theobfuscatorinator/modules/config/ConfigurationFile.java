@@ -27,6 +27,7 @@ public class ConfigurationFile {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         
+        // Parse and load config XML document
         Document document = builder.parse(new File(file));
         load(document);
     }
@@ -39,6 +40,7 @@ public class ConfigurationFile {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
 
+            // Find top-level config nodes
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element elem = (Element) node;
                 switch (elem.getTagName()) {

@@ -19,6 +19,7 @@ import com.github.javaparser.utils.SourceRoot;
 import java.lang.reflect.*;
 
 public class ModuleObfuscator {
+    // Types of modules that are available and can be enabled/disabled
     private static final Class[] moduleTypes = new Class[] { StringModule.class, MiscModule.class, 
                                                              RenameModule.class, CodeInsertModule.class };
 
