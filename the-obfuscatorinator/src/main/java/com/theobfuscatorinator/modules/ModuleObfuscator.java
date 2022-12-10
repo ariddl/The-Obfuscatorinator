@@ -96,29 +96,37 @@ public class ModuleObfuscator {
     public void run() {
         Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
 
-        SourceRoot sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(ModuleObfuscator.class).resolve("src/main/res"));
-        
-        CompilationUnit cu = sourceRoot.parse("test", "Main.java");
+        String sourceRootPath = config.getSourceRoot();
+        SourceRoot sourceRoot;
+        if (sourceRootPath.startsWith("$")) {
+            // Use relative path for testing
+            sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(ModuleObfuscator.class).resolve(sourceRootPath.substring(1)));
+        } else {
+            sourceRoot = new SourceRoot(Paths.get(sourceRootPath));
+        }
 
-        Log.info("running");
-
-        cu.accept((ModifierVisitor<Void>)activeModules.get(0), null);
-
-        cu.accept(new ModifierVisitor<Void>() {
-            @Override
-            public Visitable visit(IfStmt n, Void arg) {
-                n.getCondition().ifBinaryExpr(binaryExpr -> {
-                    if (binaryExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS && n.getElseStmt().isPresent()) {
-                        Statement thenStmt = n.getThenStmt().clone();
-                        Statement elseStmt = n.getElseStmt().get().clone();
-                        n.setThenStmt(elseStmt);
-                        n.setElseStmt(thenStmt);
-                        binaryExpr.setOperator(BinaryExpr.Operator.EQUALS);
-                    }
-                });
-                return super.visit(n, arg);
+        for (InputFileEntry inputFile : config.getInputFiles()) {
+            CompilationUnit cu = sourceRoot.parse(inputFile.packageName, inputFile.name);
+            for (int i = 0; i < activeModules.size(); ++i) {
+                cu.accept((ModifierVisitor<Void>)activeModules.get(i), null);
             }
-        }, null);
+
+            cu.accept(new ModifierVisitor<Void>() {
+                @Override
+                public Visitable visit(IfStmt n, Void arg) {
+                    n.getCondition().ifBinaryExpr(binaryExpr -> {
+                        if (binaryExpr.getOperator() == BinaryExpr.Operator.NOT_EQUALS && n.getElseStmt().isPresent()) {
+                            Statement thenStmt = n.getThenStmt().clone();
+                            Statement elseStmt = n.getElseStmt().get().clone();
+                            n.setThenStmt(elseStmt);
+                            n.setElseStmt(thenStmt);
+                            binaryExpr.setOperator(BinaryExpr.Operator.EQUALS);
+                        }
+                    });
+                    return super.visit(n, arg);
+                }
+            }, null);
+        }
 
         sourceRoot.saveAll(
                 // The path of the Maven module/project which contains the ModuleObfuscator class.
