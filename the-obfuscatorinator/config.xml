@@ -1,5 +1,6 @@
 <Configuration>
     <ClassPath path="$src/main/res" outPath="$output" />
+    <Format removeWhitespace="true" removeLines="true" />
     <Files>
         <File package="test" name="Main.java" />
     </Files>

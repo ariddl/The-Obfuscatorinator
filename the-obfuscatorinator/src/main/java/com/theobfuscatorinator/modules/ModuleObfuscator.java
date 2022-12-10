@@ -4,6 +4,7 @@ import com.theobfuscatorinator.modules.config.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.nio.file.Paths;
+import java.util.function.Function;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.BinaryExpr;
@@ -111,8 +112,36 @@ public class ModuleObfuscator {
         return true;
     }
 
+    private Function<CompilationUnit, String> getSourcePrinter(SourceRoot sourceRoot) {
+        Function<CompilationUnit, String> defaultPrinter = sourceRoot.getPrinter();
+        int formatFlags = config.getFormatFlags();
+        
+        if (formatFlags == 0) {
+            return defaultPrinter;
+        }
+
+        return cu -> {
+            String pretty = defaultPrinter.apply(cu);
+            
+            if ((formatFlags & FormatFlags.WHITESPACE.getValue()) != 0) {
+                for (String ws : new String[] {"  ", "\t"}) {
+                    pretty = pretty.replace(ws, "");
+                }
+            }
+
+            if ((formatFlags & FormatFlags.LINES.getValue()) != 0) {
+                for (String c : new String[] {"\r", "\n"}) {
+                    pretty = pretty.replace(c, "");
+                }
+            }
+
+            return pretty;
+        };
+    }
+
     public void run() {
         SourceRoot sourceRoot = new SourceRoot(ModuleUtils.resolvePath(config.getSourceRoot()));
+        sourceRoot.setPrinter(getSourcePrinter(sourceRoot));
 
         Context ctx = new Context();
         for (InputFileEntry inputFile : config.getInputFiles()) {
