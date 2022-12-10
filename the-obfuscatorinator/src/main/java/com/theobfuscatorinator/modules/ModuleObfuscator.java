@@ -19,7 +19,7 @@ import java.lang.reflect.*;
 
 public class ModuleObfuscator {
     private static final Class[] moduleTypes = new Class[] { StringModule.class, MiscModule.class, 
-                                                             RenameModule.class };
+                                                             RenameModule.class, CodeInsertModule.class };
 
     private HashMap<String, IModule> availableModules = new HashMap<String, IModule>();
     private ConfigurationFile config;
